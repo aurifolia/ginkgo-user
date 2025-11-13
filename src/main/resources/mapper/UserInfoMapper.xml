@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.aurifolia.cloud.ginkgo.user.repository.UserInfoMapper">
+
+    <resultMap id="BaseResultMap" type="org.aurifolia.cloud.ginkgo.user.entity.UserInfo">
+        <id column="id" property="id"/>
+        <result column="username" property="username"/>
+        <result column="password" property="password"/>
+        <result column="surname" property="surname"/>
+        <result column="locked" property="locked"/>
+        <result column="frozen" property="frozen"/>
+        <result column="deleted" property="deleted"/>
+        <result column="create_time" property="createTime"/>
+        <result column="update_time" property="updateTime"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id, username, password, surname, locked, frozen, deleted, create_time, update_time
+    </sql>
+
+    <insert id="insert" parameterType="org.aurifolia.cloud.ginkgo.user.entity.UserInfo" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO user_info (username, password, surname, locked, frozen, deleted, create_time, update_time)
+        VALUES (#{username}, #{password}, #{surname}, #{locked}, #{frozen}, #{deleted}, #{createTime}, #{updateTime})
+    </insert>
+
+    <update id="updateById" parameterType="org.aurifolia.cloud.ginkgo.user.entity.UserInfo">
+        UPDATE user_info
+        <set>
+            <if test="username != null and username != ''">
+                username = #{username},
+            </if>
+            <if test="password != null and password != ''">
+                password = #{password},
+            </if>
+            <if test="surname != null">
+                surname = #{surname},
+            </if>
+            <if test="locked != null">
+                locked = #{locked},
+            </if>
+            <if test="frozen != null">
+                frozen = #{frozen},
+            </if>
+            <if test="deleted != null">
+                deleted = #{deleted},
+            </if>
+            update_time = NOW()
+        </set>
+        WHERE id = #{id}
+    </update>
+
+    <select id="selectById" parameterType="long" resultMap="BaseResultMap">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM user_info
+        WHERE id = #{id} AND deleted = 0
+    </select>
+
+    <select id="selectByUsername" parameterType="string" resultMap="BaseResultMap">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM user_info
+        WHERE username = #{username} AND deleted = 0
+    </select>
+
+    <select id="selectAll" resultMap="BaseResultMap">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM user_info
+        WHERE deleted = 0
+    </select>
+
+    <update id="deleteById" parameterType="long">
+        UPDATE user_info
+        SET deleted = 1
+        WHERE id = #{id}
+    </update>
+
+</mapper>

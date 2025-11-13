@@ -1,3 +1,5 @@
+server:
+  port: 60201
 ginkgo:
   id:
     generator:
@@ -9,3 +11,39 @@ ginkgo:
         max-idle-time: 5s
     metaserver:
       url: http://localhost:60101
+spring:
+  application:
+    name: ginkgo-user-service
+  cloud:
+    nacos:
+      discovery:
+        server-addr: localhost:8848
+  datasource:
+    url: jdbc:mysql://localhost:3306/ginkgo_user?useUnicode=true&characterEncoding=utf8&useSSL=false&serverTimezone=Asia/Shanghai
+    username: root
+    password: root
+    driver-class-name: com.mysql.cj.jdbc.Driver
+mybatis:
+  configuration:
+    map-underscore-to-camel-case: true
+  mapper-locations: classpath:mapper/*.xml
+
+dubbo:
+  registry:
+    address: nacos://${nacos.address:127.0.0.1}:8848?username=nacos&password=nacos
+    # This will enable application-level service discovery only (the recommended service discovery method for Dubbo3).
+    # For users upgrading from Dubbo2.x, please set the value to 'all' for smooth migration.
+    register-mode: instance
+  protocol:
+    name: tri
+    port: 50052
+  application:
+    name: QuickStartApplication
+    logger: slf4j
+    qos-enable: true
+    qos-port: 22223
+    qos-accept-foreign-ip: false
+
+logging:
+  level:
+    root: debug
